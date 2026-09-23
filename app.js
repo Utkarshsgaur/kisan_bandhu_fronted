@@ -7,7 +7,7 @@
 // Render free tier sleeps after 15 min of inactivity. This pings the health
 // endpoint every 14 min while the browser tab is open, keeping the server warm.
 (function keepAlive() {
-  const PING_URL = "https://kisan-bandhu-backend.onrender.com/api/v1/auth/ping";
+  const PING_URL = "https://kisanbhandhu.onrender.com/api/v1/auth/ping";
   const INTERVAL_MS = 14 * 60 * 1000; // 14 minutes
 
   function ping() {
@@ -1171,7 +1171,7 @@ let adminStore = {
   payments: [],
   notifications: []
 };
-const API_BASE_URL = "https://kisan-bandhu-backend.onrender.com/api/v1";
+const API_BASE_URL = "https://kisanbhandhu.onrender.com/api/v1";
 
 async function loadAdminDataFromAPI() {
   try {
