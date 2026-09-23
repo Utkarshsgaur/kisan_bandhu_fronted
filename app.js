@@ -2206,124 +2206,68 @@ if (stateSelect) {
 
 
 // ==========================================================
-// 3. DISTRICT → VILLAGE
+// 3. DISTRICT → VILLAGE (text input) + PROCUREMENT CENTER
 // ==========================================================
 
 if (districtSelect) {
 
   districtSelect.addEventListener("change", async function () {
 
-    const state = stateSelect.value;
     const district = this.value;
 
-    villageSelect.innerHTML =
-      '<option value="">Loading villages...</option>';
-    villageSelect.disabled = true;
+    // ── Village: convert the select to a plain text input ──
+    // There are ~640k Indian villages — no static list possible.
+    // Village is just a farmer address field; centers are per-district.
+    if (villageSelect) {
+      // Hide the select, show/create a text input in its place
+      villageSelect.style.display = 'none';
+      let villageInput = document.getElementById('villageTextInput');
+      if (!villageInput) {
+        villageInput = document.createElement('input');
+        villageInput.type = 'text';
+        villageInput.id = 'villageTextInput';
+        villageInput.placeholder = 'Enter your village / town name';
+        villageInput.className = villageSelect.className;
+        villageInput.required = villageSelect.required;
+        villageSelect.parentElement.insertBefore(villageInput, villageSelect.nextSibling);
+        // Keep hidden select in sync for any form.village reads
+        villageInput.addEventListener('input', function () {
+          villageSelect.innerHTML = `<option value="${this.value}" selected>${this.value}</option>`;
+        });
+      }
+      villageInput.value = '';
+      villageInput.disabled = !district;
+    }
 
-    centerSelect.innerHTML =
-      '<option value="">First select Village</option>';
+    // ── Procurement Centers: load directly on district change ──
+    centerSelect.innerHTML = '<option value="">Loading procurement centers...</option>';
     centerSelect.disabled = true;
 
     if (!district) {
-      villageSelect.innerHTML =
-        '<option value="">First select District</option>';
+      centerSelect.innerHTML = '<option value="">First select District</option>';
       return;
     }
-
-    // Villages are a free-text field — let the user type their village name
-    // (No static list exists for all ~640k Indian villages)
-    villageSelect.innerHTML = '<option value="">Type your village name below</option>';
-
-    // Replace the dropdown with a text input for village
-    const villageContainer = villageSelect.parentElement;
-    const existingInput = document.getElementById('villageTextInput');
-    if (!existingInput) {
-      const textInput = document.createElement('input');
-      textInput.type = 'text';
-      textInput.id = 'villageTextInput';
-      textInput.name = villageSelect.name || 'village';
-      textInput.placeholder = 'Enter your village name';
-      textInput.className = villageSelect.className;
-      textInput.style.cssText = villageSelect.style.cssText;
-      textInput.required = villageSelect.required;
-      villageSelect.style.display = 'none';
-      villageContainer.appendChild(textInput);
-
-      // Sync text input value back to hidden select so form works
-      textInput.addEventListener('input', function() {
-        villageSelect.innerHTML = `<option value="${this.value}" selected>${this.value}</option>`;
-        villageSelect.value = this.value;
-        // Trigger center loading
-        districtSelect.dispatchEvent(new Event('villageReady'));
-      });
-    } else {
-      existingInput.style.display = '';
-      existingInput.value = '';
-    }
-
-    villageSelect.disabled = false;
-
-  });
-
-}
-
-
-// ==========================================================
-// 4. VILLAGE → PROCUREMENT CENTER
-// ==========================================================
-
-if (villageSelect) {
-
-  villageSelect.addEventListener("change", async function () {
-
-    const state = stateSelect.value;
-    const district = districtSelect.value;
-    const village = this.value;
-
-
-    centerSelect.innerHTML =
-      '<option value="">Loading procurement centers...</option>';
-
-    centerSelect.disabled = true;
-
-
-    if (!village) {
-
-      centerSelect.innerHTML =
-        '<option value="">First select Village</option>';
-
-      return;
-
-    }
-
 
     try {
-
-      // Use the real backend API — /api/v1/centres returns all centres,
-      // filter by district on the client side
       const response = await fetch(
-        `https://kisanbhandhu.onrender.com/api/v1/centres`,
+        'https://kisanbhandhu.onrender.com/api/v1/centres',
         { headers: { 'Accept': 'application/json' } }
       );
 
-      if (!response.ok) {
-        throw new Error("Centres API failed: " + response.status);
-      }
+      if (!response.ok) throw new Error('Centres API ' + response.status);
 
       const allCentres = await response.json();
 
-      // Filter centres by selected district (case-insensitive)
-      const centres = allCentres.filter(function(c) {
-        return !district || (c.district && c.district.toLowerCase() === district.toLowerCase());
+      const centres = allCentres.filter(function (c) {
+        return c.district && c.district.toLowerCase() === district.toLowerCase();
       });
 
-      centerSelect.innerHTML = '<option value="">Select Procurement Center</option>';
-
       if (centres.length === 0) {
-        centerSelect.innerHTML = '<option value="">No centers found in this district</option>';
+        centerSelect.innerHTML = '<option value="">No centers found in ' + district + '</option>';
       } else {
+        centerSelect.innerHTML = '<option value="">Select Procurement Center</option>';
         centres.forEach(function (center) {
-          const option = document.createElement("option");
+          const option = document.createElement('option');
           option.value = center.id || center.name;
           option.textContent = center.name + (center.address ? ' — ' + center.address : '');
           centerSelect.appendChild(option);
@@ -2332,10 +2276,8 @@ if (villageSelect) {
       }
 
     } catch (error) {
-
-      console.error("Procurement Center Error:", error);
-      centerSelect.innerHTML = '<option value="">Centers unavailable — check backend</option>';
-
+      console.error('Procurement Center Error:', error);
+      centerSelect.innerHTML = '<option value="">Centers unavailable — backend may be waking up</option>';
     }
 
   });
