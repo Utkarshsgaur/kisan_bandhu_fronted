@@ -3,6 +3,25 @@
  * Features: Dark Mode, Multi-Language (Hindi/English), Geo Map, Live Queue, Slot Booking, AI Chatbot
  */
 
+// ── Keep-Alive Pinger ────────────────────────────────────────────────────────
+// Render free tier sleeps after 15 min of inactivity. This pings the health
+// endpoint every 14 min while the browser tab is open, keeping the server warm.
+(function keepAlive() {
+  const PING_URL = "https://kisan-bandhu-backend.onrender.com/api/v1/auth/ping";
+  const INTERVAL_MS = 14 * 60 * 1000; // 14 minutes
+
+  function ping() {
+    fetch(PING_URL, { method: "GET", cache: "no-store" })
+      .then(() => console.log("[KeepAlive] Backend pinged ✅", new Date().toLocaleTimeString()))
+      .catch(() => console.warn("[KeepAlive] Ping failed — backend may be waking up 🔄"));
+  }
+
+  // Ping immediately on load, then every 14 minutes
+  ping();
+  setInterval(ping, INTERVAL_MS);
+})();
+// ────────────────────────────────────────────────────────────────────────────
+
 
 // Application State & Settings
 const state = {
