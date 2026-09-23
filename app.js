@@ -29,7 +29,7 @@ const state = {
   theme: localStorage.getItem('kb_theme') || 'light',
   lang: localStorage.getItem('kb_lang') || 'hi', // default to Hindi for all farmers
   currentUser: {
-    name: 'Priyam Prajapati',
+    name: 'Jayant Pranjal',
     farmerId: '#RB10240',
     token: '#1024',
 
@@ -76,7 +76,7 @@ const state = {
     }
   ],
   adminBookings: [
-    { token: '#1024', farmer: 'Priyam Prajapati', crop: 'Wheat', slot: '10:00 AM - 11:00 AM', status: 'Confirmed' },
+    { token: '#1024', farmer: 'Jayant Pranjal', crop: 'Wheat', slot: '10:00 AM - 11:00 AM', status: 'Confirmed' },
     { token: '#1025', farmer: 'Priyanshu Singh', crop: 'Rice', slot: '10:00 AM - 11:00 AM', status: 'Waiting' },
     { token: '#1026', farmer: 'Utkarsh Pratap Singh', crop: 'Wheat', slot: '11:00 AM - 12:00 PM', status: 'Confirmed' },
     { token: '#1027', farmer: 'Mohan Lal', crop: 'Maize', slot: '11:00 AM - 12:00 PM', status: 'Pending' },
@@ -560,7 +560,7 @@ function createQRData() {
     passId: "KB-" + String(user.token || "#1024").replace("#", ""),
     token: user.token || "#1024",
     farmerId: user.farmerId || "#RB10240",
-    farmerName: user.name || "Priyam Prajapati",
+    farmerName: user.name || "Jayant Pranjal",
     crop: user.crop || "Wheat (Kanak)",
     center: user.center || "Meerut Central Mandi",
     date: user.date || "-",
@@ -1100,11 +1100,11 @@ const ADMIN_TODAY = '2026-09-14';
 const adminSeed = {
   users: [
     { userId: 'ADM001', name: 'System Admin', contact: 'admin@kisanbandhu.in', role: 'ADMIN', accountStatus: 'ACTIVE', createdAt: '2026-08-01' },
-    { userId: 'USR10240', name: 'Priyam Prajapati', contact: '8081052909', role: 'FARMER', accountStatus: 'ACTIVE', createdAt: '2026-08-20' },
+    { userId: 'USR10240', name: 'Jayant Pranjal', contact: '8081052909', role: 'FARMER', accountStatus: 'ACTIVE', createdAt: '2026-08-20' },
     { userId: 'USR10241', name: 'Priyanshu Singh', contact: '9876543210', role: 'FARMER', accountStatus: 'ACTIVE', createdAt: '2026-08-21' }
   ],
   farmers: [
-    { fullName: 'Priyam Prajapati', userId: 'USR10240', village: 'Daurala', district: 'Meerut', state: 'Uttar Pradesh', pincode: '250221', alternatePhone: '9876500001', aadhaarHash: 'HASH••••1024', status: 'ACTIVE' },
+    { fullName: 'Jayant Pranjal', userId: 'USR10240', village: 'Daurala', district: 'Meerut', state: 'Uttar Pradesh', pincode: '250221', alternatePhone: '9876500001', aadhaarHash: 'HASH••••1024', status: 'ACTIVE' },
     { fullName: 'Priyanshu Singh', userId: 'USR10241', village: 'Modinagar', district: 'Ghaziabad', state: 'Uttar Pradesh', pincode: '201201', alternatePhone: '9876500002', aadhaarHash: 'HASH••••1025', status: 'ACTIVE' },
     { fullName: 'Mohan Lal', userId: 'USR10242', village: 'Hapur', district: 'Hapur', state: 'Uttar Pradesh', pincode: '245101', alternatePhone: '9876500003', aadhaarHash: 'HASH••••1026', status: 'INACTIVE' }
   ],
@@ -1129,7 +1129,7 @@ const adminSeed = {
     { centre: 'Hapur Grain Market', season: 'Kharif 2026', crop: 'Paddy / Rice', scheduleDate: ADMIN_TODAY, startTime: '11:00', endTime: '12:00', maxCapacity: 120, status: 'CLOSED', bookedCapacity: 120, availableCapacity: 0 }
   ],
   bookings: [
-    { bookingId: 'BK1001', farmer: 'Priyam Prajapati', schedule: 'MRT001 / 10:00-11:00', quantity: 45, bookingDate: ADMIN_TODAY, bookingStatus: 'CONFIRMED' },
+    { bookingId: 'BK1001', farmer: 'Jayant Pranjal', schedule: 'MRT001 / 10:00-11:00', quantity: 45, bookingDate: ADMIN_TODAY, bookingStatus: 'CONFIRMED' },
     { bookingId: 'BK1002', farmer: 'Priyanshu Singh', schedule: 'MRT001 / 10:00-11:00', quantity: 30, bookingDate: ADMIN_TODAY, bookingStatus: 'WAITING' },
     { bookingId: 'BK1003', farmer: 'Mohan Lal', schedule: 'HPR001 / 11:00-12:00', quantity: 60, bookingDate: ADMIN_TODAY, bookingStatus: 'PENDING' }
   ],
@@ -1143,12 +1143,12 @@ const adminSeed = {
     { recordId: 'PR3003', bookingId: 'BK1003', procuredQuantity: 0, procurementStatus: 'REJECTED', rejectionReason: 'Quality standard not met', procurementDateTime: '2026-09-14 11:25' }
   ],
   payments: [
-    { paymentId: 'PAY4001', bookingId: 'BK1001', farmer: 'Priyam Prajapati', amount: 103500, paymentMethod: 'BANK_TRANSFER', transactionId: 'TXN900001', paymentStatus: 'SUCCESS', paymentDate: '2026-09-08' },
+    { paymentId: 'PAY4001', bookingId: 'BK1001', farmer: 'Jayant Pranjal', amount: 103500, paymentMethod: 'BANK_TRANSFER', transactionId: 'TXN900001', paymentStatus: 'SUCCESS', paymentDate: '2026-09-08' },
     { paymentId: 'PAY4002', bookingId: 'BK1002', farmer: 'Priyanshu Singh', amount: 72000, paymentMethod: 'BANK_TRANSFER', transactionId: '', paymentStatus: 'PENDING', paymentDate: '' },
     { paymentId: 'PAY4003', bookingId: 'BK1003', farmer: 'Mohan Lal', amount: 0, paymentMethod: 'BANK_TRANSFER', transactionId: '', paymentStatus: 'FAILED', paymentDate: '2026-09-08' }
   ],
   notifications: [
-    { notificationId: 'NT5001', farmer: 'Priyam Prajapati', booking: 'BK1001', notificationType: 'SLOT_CONFIRMATION', channel: 'SMS', message: 'Your procurement slot is confirmed.', status: 'SENT', sentAt: '2026-09-08 08:30' },
+    { notificationId: 'NT5001', farmer: 'Jayant Pranjal', booking: 'BK1001', notificationType: 'SLOT_CONFIRMATION', channel: 'SMS', message: 'Your procurement slot is confirmed.', status: 'SENT', sentAt: '2026-09-08 08:30' },
     { notificationId: 'NT5002', farmer: 'Priyanshu Singh', booking: 'BK1002', notificationType: 'QUEUE_UPDATE', channel: 'WHATSAPP', message: 'Your current queue position is 12.', status: 'SENT', sentAt: '2026-09-08 09:45' },
     { notificationId: 'NT5003', farmer: 'Mohan Lal', booking: 'BK1003', notificationType: 'PAYMENT_ALERT', channel: 'SMS', message: 'Payment is awaiting verification.', status: 'FAILED', sentAt: '2026-09-08 12:00' }
   ]
