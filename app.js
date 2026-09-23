@@ -2230,42 +2230,38 @@ if (districtSelect) {
       return;
     }
 
-    try {
+    // Villages are a free-text field — let the user type their village name
+    // (No static list exists for all ~640k Indian villages)
+    villageSelect.innerHTML = '<option value="">Type your village name below</option>';
 
-      const response = await fetch(
-        `/api/villages?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}`
-      );
+    // Replace the dropdown with a text input for village
+    const villageContainer = villageSelect.parentElement;
+    const existingInput = document.getElementById('villageTextInput');
+    if (!existingInput) {
+      const textInput = document.createElement('input');
+      textInput.type = 'text';
+      textInput.id = 'villageTextInput';
+      textInput.name = villageSelect.name || 'village';
+      textInput.placeholder = 'Enter your village name';
+      textInput.className = villageSelect.className;
+      textInput.style.cssText = villageSelect.style.cssText;
+      textInput.required = villageSelect.required;
+      villageSelect.style.display = 'none';
+      villageContainer.appendChild(textInput);
 
-      if (!response.ok) {
-        throw new Error("Village API failed");
-      }
-
-      const villages = await response.json();
-
-      villageSelect.innerHTML =
-        '<option value="">Select Village</option>';
-
-      villages.forEach(function (village) {
-        const option = document.createElement("option");
-        option.value = village;
-        option.textContent = village;
-        villageSelect.appendChild(option);
+      // Sync text input value back to hidden select so form works
+      textInput.addEventListener('input', function() {
+        villageSelect.innerHTML = `<option value="${this.value}" selected>${this.value}</option>`;
+        villageSelect.value = this.value;
+        // Trigger center loading
+        districtSelect.dispatchEvent(new Event('villageReady'));
       });
-
-      villageSelect.disabled = false;
-
-    } catch (error) {
-
-      console.error("Village Error:", error);
-
-      villageSelect.innerHTML =
-        '<option value="">Village data unavailable</option>';
-
-      alert(
-        "Village data load nahi ho pa raha. Backend/API check karein."
-      );
-
+    } else {
+      existingInput.style.display = '';
+      existingInput.value = '';
     }
+
+    villageSelect.disabled = false;
 
   });
 
@@ -2303,68 +2299,42 @@ if (villageSelect) {
 
     try {
 
+      // Use the real backend API — /api/v1/centres returns all centres,
+      // filter by district on the client side
       const response = await fetch(
-        `/api/procurement-centers?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}&village=${encodeURIComponent(village)}`
+        `https://kisanbhandhu.onrender.com/api/v1/centres`,
+        { headers: { 'Accept': 'application/json' } }
       );
 
-
       if (!response.ok) {
-
-        throw new Error(
-          "Procurement center API failed"
-        );
-
+        throw new Error("Centres API failed: " + response.status);
       }
 
+      const allCentres = await response.json();
 
-      const centers = await response.json();
-
-
-      centerSelect.innerHTML =
-        '<option value="">Select Procurement Center</option>';
-
-
-      centers.forEach(function (center) {
-
-        const option = document.createElement("option");
-
-
-        if (typeof center === "object") {
-
-          option.value = center.id || center.name;
-          option.textContent = center.name || center.id;
-
-        } else {
-
-          option.value = center;
-          option.textContent = center;
-
-        }
-
-
-        centerSelect.appendChild(option);
-
+      // Filter centres by selected district (case-insensitive)
+      const centres = allCentres.filter(function(c) {
+        return !district || (c.district && c.district.toLowerCase() === district.toLowerCase());
       });
 
+      centerSelect.innerHTML = '<option value="">Select Procurement Center</option>';
 
-      centerSelect.disabled = false;
-
+      if (centres.length === 0) {
+        centerSelect.innerHTML = '<option value="">No centers found in this district</option>';
+      } else {
+        centres.forEach(function (center) {
+          const option = document.createElement("option");
+          option.value = center.id || center.name;
+          option.textContent = center.name + (center.address ? ' — ' + center.address : '');
+          centerSelect.appendChild(option);
+        });
+        centerSelect.disabled = false;
+      }
 
     } catch (error) {
 
-      console.error(
-        "Procurement Center Error:",
-        error
-      );
-
-
-      centerSelect.innerHTML =
-        '<option value="">Centers unavailable</option>';
-
-
-      alert(
-        "Procurement center data load nahi ho pa raha."
-      );
+      console.error("Procurement Center Error:", error);
+      centerSelect.innerHTML = '<option value="">Centers unavailable — check backend</option>';
 
     }
 
